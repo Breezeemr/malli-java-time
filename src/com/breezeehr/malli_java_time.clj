@@ -2,7 +2,7 @@
   (:require [malli.core :as m]
             [clojure.test.check.generators :as gen]
             [malli.transform :as mt])
-  (:import (java.time LocalDateTime LocalDate LocalTime ZonedDateTime ZoneId)))
+  (:import (java.time LocalDateTime LocalDate LocalTime OffsetDateTime ZoneOffset ZonedDateTime ZoneId)))
 
 (defn -string->localDateTime [x]
   (if (string? x)
@@ -22,6 +22,13 @@
   (if (string? x)
     (try
       (ZonedDateTime/parse x)
+      (catch Exception _e x))
+    x))
+
+(defn -string->OffsetDateTime [x]
+  (if (string? x)
+    (try
+      (OffsetDateTime/parse x)
       (catch Exception _e x))
     x))
 
@@ -85,8 +92,8 @@
                                                 minute ^Long (gen/large-integer* {:min 0 :max 59})
                                                 second ^Long (gen/large-integer* {:min 0 :max 59})
                                                 nanosofsecond ^Long (gen/large-integer* {:min 0 :max 1000000})
-                                                zone (gen/elements ZoneId/SHORT_IDS)]
-                                        (ZonedDateTime/of (LocalDateTime/of year month day hour minute second nanosofsecond) zone))}}))
+                                                [_ zone] (gen/elements ZoneId/SHORT_IDS)]
+                                        (ZonedDateTime/of (LocalDateTime/of year month day hour minute second nanosofsecond) (ZoneId/of zone)))}}))
 (def local-time
   (m/-simple-schema
     {:type            :local-time
@@ -102,3 +109,22 @@
                                                 second ^Long (gen/large-integer* {:min 0 :max 59})
                                                 nanosofsecond ^Long (gen/large-integer* {:min 0 :max 1000000})]
                                         (LocalTime/of hour minute second nanosofsecond))}}))
+
+(def offset-date-time (m/-simple-schema
+                        {:type            :offset-date-time
+                         :pred            #(instance? OffsetDateTime %)
+                         :type-properties {:error/message "should be localDateTime"
+                                           :decode/string -string->OffsetDateTime
+                                           :encode/string mt/-any->string
+                                           ;:json-schema/type    "integer"
+                                           ;:json-schema/format  "int64"
+                                           ;:json-schema/minimum 6
+                                           :gen/gen       (gen/let [year ^Long (gen/large-integer* {:min 0 :max 10000})
+                                                                    month ^Long (gen/large-integer* {:min 1 :max 12})
+                                                                    day ^Long (gen/large-integer* {:min 1 :max 29})
+                                                                    hour ^Long (gen/large-integer* {:min 0 :max 23})
+                                                                    minute ^Long (gen/large-integer* {:min 0 :max 59})
+                                                                    second ^Long (gen/large-integer* {:min 0 :max 59})
+                                                                    nanosofsecond ^Long (gen/large-integer* {:min 0 :max 1000000})
+                                                                    offset (gen/large-integer* {:min -18 :max 18})]
+                                                            (OffsetDateTime/of (LocalDateTime/of year month day hour minute second nanosofsecond) (ZoneOffset/ofHours offset)))}}))

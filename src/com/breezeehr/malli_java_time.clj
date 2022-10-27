@@ -48,6 +48,8 @@
      :type-properties {:error/message "should be localDate"
                        :decode/string -string->localDate
                        :encode/string mt/-any->string
+                       :decode/json -string->localDate
+                       :encode/json mt/-any->string
                        ;:json-schema/type    "integer"
                        ;:json-schema/format  "int64"
                        ;:json-schema/minimum 6
@@ -63,6 +65,8 @@
      :type-properties {:error/message "should be localDateTime"
                        :decode/string -string->localDateTime
                        :encode/string mt/-any->string
+                       :decode/json -string->localDateTime
+                       :encode/json mt/-any->string
                        ;:json-schema/type    "integer"
                        ;:json-schema/format  "int64"
                        ;:json-schema/minimum 6
@@ -82,6 +86,8 @@
      :type-properties {:error/message "should be localDateTime"
                        :decode/string -string->zonedDateTime
                        :encode/string mt/-any->string
+                       :decode/json -string->zonedDateTime
+                       :encode/json mt/-any->string
                        ;:json-schema/type    "integer"
                        ;:json-schema/format  "int64"
                        ;:json-schema/minimum 6
@@ -101,6 +107,8 @@
      :type-properties {:error/message "should be localTime"
                        :decode/string -string->localTime
                        :encode/string mt/-any->string
+                       :decode/json -string->localTime
+                       :encode/json mt/-any->string
                        ;:json-schema/type    "integer"
                        ;:json-schema/format  "int64"
                        ;:json-schema/minimum 6
@@ -116,6 +124,8 @@
                          :type-properties {:error/message "should be localDateTime"
                                            :decode/string -string->OffsetDateTime
                                            :encode/string mt/-any->string
+                                           :decode/json -string->OffsetDateTime
+                                           :encode/json mt/-any->string
                                            ;:json-schema/type    "integer"
                                            ;:json-schema/format  "int64"
                                            ;:json-schema/minimum 6
